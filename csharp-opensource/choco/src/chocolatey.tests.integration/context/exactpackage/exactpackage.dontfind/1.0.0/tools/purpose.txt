@@ -1,1 +1,0 @@
-when running choco list exactpackage -e, this package should not be returned.
