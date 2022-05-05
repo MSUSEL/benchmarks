@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/csharp-opensource/AutoMapper" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/csharp-opensource/BenchmarkDotNet" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/csharp-opensource/Electron.NET" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/csharp-opensource/FluentTerminal" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/csharp-opensource/Hangfire" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/csharp-opensource/Ocelot" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/csharp-opensource/OpenRA" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/csharp-opensource/Opserver" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/csharp-opensource/PushSharp" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/csharp-opensource/RestSharp" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/csharp-opensource/ScreenToGif" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/csharp-opensource/SparkleShare" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/csharp-opensource/Wox" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/csharp-opensource/example-voting-app" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/csharp-opensource/iotedge" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/csharp-opensource/jellyfin" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/csharp-opensource/mRemoteNG" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/csharp-opensource/server" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/csharp-opensource/workflow-core" vcs="Git" />
+  </component>
+</project>

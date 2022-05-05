@@ -1,0 +1,10 @@
+node_modules
+bin
+obj
+wwwroot/dist
+*.log
+/.sass-cache
+/connect.lock
+/coverage/*
+/Logs/**
+**.db
