@@ -1,0 +1,407 @@
+﻿<Page
+    x:Class="FluentTerminal.App.Views.SettingsPages.ShellProfileSettings"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:enums="using:FluentTerminal.Models.Enums"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodels="using:FluentTerminal.App.ViewModels"
+    xmlns:views="using:FluentTerminal.App.Views"
+    mc:Ignorable="d">
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <views:TemplateSelectors />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="160" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="32" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Border
+            Grid.RowSpan="3"
+            Grid.Column="0"
+            Background="{ThemeResource SystemControlBackgroundBaseLowBrush}" />
+        <Grid
+            Grid.Row="1"
+            Grid.ColumnSpan="2"
+            Margin="{StaticResource HeaderMargin}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="160" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock
+                x:Uid="Profiles"
+                Grid.Column="0"
+                VerticalAlignment="Center"
+                FontSize="28"
+                Style="{StaticResource TitleTextBlockStyle}"
+                Text="Profiles" />
+            <CommandBar
+                Grid.Column="1"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Background="Transparent"
+                DefaultLabelPosition="Right"
+                Visibility="{x:Bind ViewModel.SelectedShellProfile.InEditMode, Mode=OneWay, Converter={StaticResource FalseToVisibleConverter}}">
+                <AppBarButton
+                    x:Uid="SetDefaultAppBarButton"
+                    Command="{x:Bind ViewModel.SelectedShellProfile.SetDefaultCommand, Mode=OneWay}"
+                    Icon="Accept"
+                    IsEnabled="{x:Bind ViewModel.SelectedShellProfile.IsDefault, Mode=OneWay, Converter={StaticResource NegateConverter}}"
+                    Label="Set Default" />
+                <AppBarButton
+                    x:Uid="CloneAppBarButton"
+                    Command="{x:Bind ViewModel.CloneCommand, Mode=OneWay}"
+                    CommandParameter="{x:Bind ViewModel.SelectedShellProfile, Mode=OneWay}"
+                    Icon="Copy"
+                    Label="Clone" />
+                <AppBarButton
+                    x:Uid="EditAppBarButton"
+                    Command="{x:Bind ViewModel.SelectedShellProfile.EditCommand, Mode=OneWay}"
+                    Icon="Edit"
+                    Label="Edit" />
+                <AppBarButton
+                    x:Uid="DeleteAppBarButton"
+                    Command="{x:Bind ViewModel.SelectedShellProfile.DeleteCommand, Mode=OneWay}"
+                    Icon="Delete"
+                    Label="Delete"
+                    Visibility="{x:Bind ViewModel.SelectedShellProfile.ProfileVm.PreInstalled, Mode=OneWay, Converter={StaticResource FalseToVisibleConverter}}" />
+                <AppBarButton
+                    x:Uid="Restore"
+                    Command="{x:Bind ViewModel.SelectedShellProfile.RestoreDefaultsCommand, Mode=OneWay}"
+                    Icon="Undo"
+                    Label="Restore Defaults"
+                    Visibility="{x:Bind ViewModel.SelectedShellProfile.ProfileVm.PreInstalled, Mode=OneWay, Converter={StaticResource TrueToVisibleConverter}}" />
+            </CommandBar>
+            <CommandBar
+                Grid.Column="1"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Background="Transparent"
+                DefaultLabelPosition="Right"
+                Visibility="{x:Bind ViewModel.SelectedShellProfile.InEditMode, Mode=OneWay, Converter={StaticResource TrueToVisibleConverter}}">
+                <AppBarButton
+                    x:Uid="SaveAppBarButton"
+                    Command="{x:Bind ViewModel.SelectedShellProfile.SaveChangesCommand, Mode=OneWay}"
+                    Icon="Save"
+                    Label="Save" />
+                <AppBarButton
+                    x:Uid="CancelAppBarButton"
+                    Command="{x:Bind ViewModel.SelectedShellProfile.CancelEditCommand, Mode=OneWay}"
+                    Icon="Cancel"
+                    Label="Cancel" />
+            </CommandBar>
+        </Grid>
+        <ScrollViewer
+            Grid.Row="2"
+            Grid.Column="0"
+            VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="{StaticResource ItemMargin}">
+                <ListView ItemsSource="{x:Bind ViewModel.ShellProfiles}" SelectedItem="{x:Bind ViewModel.SelectedShellProfile, Mode=TwoWay}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="viewmodels:ShellProfileViewModel">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="{x:Bind Name, Mode=OneWay}" />
+                                <Viewbox
+                                    Grid.Column="1"
+                                    Width="16"
+                                    Height="16"
+                                    HorizontalAlignment="Right">
+                                    <SymbolIcon Symbol="Accept" Visibility="{x:Bind IsDefault, Mode=OneWay, Converter={StaticResource TrueToVisibleConverter}}" />
+                                </Viewbox>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                </ListView>
+                <Button
+                    Height="48"
+                    Margin="0,12,0,0"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Left"
+                    Background="Transparent"
+                    Command="{x:Bind ViewModel.CreateShellProfileCommand}"
+                    Style="{StaticResource ButtonRevealStyle}">
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal">
+                            <Viewbox
+                                Width="12"
+                                Height="12"
+                                Margin="0,0,6,0">
+                                <SymbolIcon Symbol="Add" />
+                            </Viewbox>
+                            <TextBlock
+                                x:Uid="CreateProfile"
+                                Style="{StaticResource CaptionTextBlockStyle}"
+                                Text="Create new" />
+                        </StackPanel>
+                    </Button.Content>
+                </Button>
+            </StackPanel>
+        </ScrollViewer>
+        <ScrollViewer
+            Grid.Row="2"
+            Grid.Column="1"
+            HorizontalAlignment="Stretch"
+            VerticalScrollBarVisibility="Auto">
+            <ContentControl
+                Margin="{StaticResource ContainerMargin}"
+                HorizontalContentAlignment="Stretch"
+                Content="{x:Bind ViewModel.SelectedShellProfile, Mode=OneWay}">
+                <ContentControl.ContentTemplate>
+                    <DataTemplate x:DataType="viewmodels:ShellProfileViewModel">
+                        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <StackPanel Visibility="{x:Bind InEditMode, Converter={StaticResource TrueToVisibleConverter}, Mode=OneWay}">
+                                <TextBox
+                                    x:Uid="ProfileName"
+                                    Width="300"
+                                    Margin="{StaticResource ItemMargin}"
+                                    HorizontalAlignment="Left"
+                                    Header="Name"
+                                    IsEnabled="{x:Bind ProfileVm.PreInstalled, Converter={StaticResource NegateConverter}, Mode=OneWay}"
+                                    IsSpellCheckEnabled="False"
+                                    Text="{x:Bind Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                                <StackPanel Margin="{StaticResource ItemMargin}" Orientation="Horizontal">
+                                    <TextBox
+                                        x:Uid="ShellLocation"
+                                        Width="300"
+                                        Header="Shell executable location"
+                                        IsEnabled="{x:Bind ProfileVm.PreInstalled, Converter={StaticResource NegateConverter}, Mode=OneWay}"
+                                        IsSpellCheckEnabled="False"
+                                        Text="{x:Bind ProfileVm.Location, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                    <Button
+                                        Margin="6,0,0,0"
+                                        VerticalAlignment="Bottom"
+                                        Command="{x:Bind ProfileVm.BrowseForCustomShellCommand}"
+                                        Content="..."
+                                        IsEnabled="{x:Bind ProfileVm.PreInstalled, Converter={StaticResource NegateConverter}, Mode=OneWay}"
+                                        Style="{StaticResource ButtonRevealStyle}" />
+                                </StackPanel>
+
+                                <StackPanel Margin="{StaticResource ItemMargin}" Orientation="Horizontal">
+                                    <TextBox
+                                        x:Uid="WorkingDir"
+                                        Width="300"
+                                        Header="Working directory"
+                                        IsEnabled="{x:Bind InEditMode, Mode=OneWay}"
+                                        IsSpellCheckEnabled="False"
+                                        Text="{x:Bind ProfileVm.WorkingDirectory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                    <Button
+                                        Margin="6,0,0,0"
+                                        VerticalAlignment="Bottom"
+                                        Command="{x:Bind ProfileVm.BrowseForWorkingDirectoryCommand}"
+                                        Content="..."
+                                        Style="{StaticResource ButtonRevealStyle}" />
+                                </StackPanel>
+
+                                <TextBox
+                                    x:Uid="Arguments"
+                                    Width="300"
+                                    Margin="{StaticResource ItemMargin}"
+                                    HorizontalAlignment="Left"
+                                    Header="Arguments"
+                                    IsEnabled="{x:Bind InEditMode, Mode=OneWay}"
+                                    IsSpellCheckEnabled="False"
+                                    Text="{x:Bind ProfileVm.Arguments, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                                <ComboBox
+                                    x:Uid="TabColor"
+                                    Width="150"
+                                    Margin="{StaticResource ItemMargin}"
+                                    Header="Tab color"
+                                    IsEnabled="{x:Bind InEditMode, Mode=OneWay}"
+                                    ItemTemplateSelector="{StaticResource TabThemeTemplateSelector}"
+                                    ItemsSource="{x:Bind ProfileVm.TabThemes, Mode=OneWay}"
+                                    SelectedItem="{Binding ProfileVm.SelectedTabTheme, Mode=TwoWay}" />
+
+                                <ComboBox
+                                    x:Uid="ProfileTheme"
+                                    Width="150"
+                                    Margin="{StaticResource ItemMargin}"
+                                    Header="Theme"
+                                    IsEnabled="{x:Bind InEditMode, Mode=OneWay}"
+                                    ItemTemplateSelector="{StaticResource TerminalThemeTemplateSelector}"
+                                    ItemsSource="{x:Bind ProfileVm.TerminalThemes, Mode=OneWay}"
+                                    SelectedItem="{Binding ProfileVm.SelectedTerminalTheme, Mode=TwoWay}" />
+
+                                <ToggleSwitch
+                                    x:Uid="UseConPty"
+                                    Margin="{StaticResource ItemMargin}"
+                                    Header="{x:Bind Converter={StaticResource I18NConverter}, ConverterParameter=UseConPty}"
+                                    IsEnabled="{x:Bind InEditMode, Mode=OneWay}"
+                                    IsOn="{x:Bind ProfileVm.UseConPty, Mode=TwoWay}" />
+
+                                <ToggleSwitch
+                                    x:Uid="UseBuffer"
+                                    Margin="{StaticResource ItemMargin}"
+                                    Header="{x:Bind Converter={StaticResource I18NConverter}, ConverterParameter=UseBuffer}"
+                                    IsEnabled="{x:Bind InEditMode, Mode=OneWay}"
+                                    IsOn="{x:Bind ProfileVm.UseBuffer, Mode=TwoWay}" />
+
+                                <StackPanel Margin="{StaticResource ItemMargin}">
+                                    <TextBlock
+                                        x:Uid="EnvironmentVariables"
+                                        Margin="0,0,6,0"
+                                        VerticalAlignment="Center" />
+                                    <views:EnvironmentVariablesView EnvironmentVariables="{x:Bind EnvironmentVariables, Mode=OneWay}" />
+                                </StackPanel>
+
+                                <StackPanel Margin="{StaticResource ItemMargin}">
+                                    <TextBlock
+                                        x:Uid="KeyboardShortcut1"
+                                        Margin="0,0,6,0"
+                                        VerticalAlignment="Center"
+                                        Text="Keyboard shortcut" />
+                                    <HyperlinkButton
+                                        x:Uid="Add"
+                                        Command="{x:Bind AddKeyboardShortcutCommand}"
+                                        Content="Add" />
+                                    <views:KeyBindingsView ShowCommandName="False" ViewModel="{x:Bind KeyBindings}" />
+                                </StackPanel>
+                            </StackPanel>
+                            <StackPanel Visibility="{x:Bind InEditMode, Mode=OneWay, Converter={StaticResource FalseToVisibleConverter}}">
+                                <TextBlock
+                                    Margin="{StaticResource ItemMargin}"
+                                    Style="{StaticResource SubtitleTextBlockStyle}"
+                                    Text="{x:Bind Name, Mode=OneWay}" />
+
+                                <controls:HeaderedTextBlock
+                                    x:Uid="ShellLocation"
+                                    Margin="{StaticResource ItemMargin}"
+                                    Header="Shell executable location"
+                                    Text="{x:Bind ProfileVm.Location, Mode=OneWay}" />
+
+                                <controls:HeaderedContentControl
+                                    x:Uid="WorkingDir"
+                                    Margin="{StaticResource ItemMargin}"
+                                    HorizontalContentAlignment="Stretch"
+                                    Header="Working directory">
+                                    <ContentControl
+                                        Content="{x:Bind ProfileVm.WorkingDirectory, Mode=OneWay}"
+                                        ContentTemplateSelector="{StaticResource NoValueTemplateSelector}"
+                                        FontSize="18"
+                                        FontWeight="Light" />
+                                </controls:HeaderedContentControl>
+
+                                <controls:HeaderedContentControl
+                                    x:Uid="Arguments"
+                                    Margin="{StaticResource ItemMargin}"
+                                    HorizontalContentAlignment="Stretch"
+                                    Header="Arguments">
+                                    <ContentControl
+                                        Content="{x:Bind ProfileVm.Arguments, Mode=OneWay}"
+                                        ContentTemplateSelector="{StaticResource NoValueTemplateSelector}"
+                                        FontSize="18"
+                                        FontWeight="Light" />
+                                </controls:HeaderedContentControl>
+
+                                <controls:HeaderedContentControl
+                                    x:Uid="TabColor"
+                                    Margin="{StaticResource ItemMargin}"
+                                    HorizontalContentAlignment="Stretch"
+                                    Header="Tab color">
+                                    <ContentControl
+                                        Margin="0,6,0,0"
+                                        Content="{x:Bind ProfileVm.SelectedTabTheme, Mode=OneWay}"
+                                        ContentTemplateSelector="{StaticResource TabThemeTemplateSelector}"
+                                        FontSize="18"
+                                        FontWeight="Light" />
+                                </controls:HeaderedContentControl>
+
+                                <controls:HeaderedContentControl
+                                    Margin="{StaticResource ItemMargin}"
+                                    HorizontalContentAlignment="Stretch"
+                                    Header="Theme">
+                                    <ContentControl
+                                        Margin="0,6,0,0"
+                                        Content="{x:Bind ProfileVm.SelectedTerminalTheme, Mode=OneWay}"
+                                        ContentTemplateSelector="{StaticResource TerminalThemeTemplateSelector}"
+                                        FontSize="18"
+                                        FontWeight="Light" />
+                                </controls:HeaderedContentControl>
+
+                                <controls:HeaderedContentControl
+                                    Margin="{StaticResource ItemMargin}"
+                                    HorizontalContentAlignment="Stretch"
+                                    Header="{x:Bind Converter={StaticResource I18NConverter}, ConverterParameter=UseConPty}">
+                                    <ContentControl
+                                        Margin="0,6,0,0"
+                                        Content="{x:Bind ProfileVm.UseConPty, Mode=OneWay}"
+                                        ContentTemplateSelector="{StaticResource UseConPtyTemplateSelector}"
+                                        FontSize="18"
+                                        FontWeight="Light" />
+                                </controls:HeaderedContentControl>
+
+                                <controls:HeaderedContentControl
+                                    Margin="{StaticResource ItemMargin}"
+                                    HorizontalContentAlignment="Stretch"
+                                    Header="{x:Bind Converter={StaticResource I18NConverter}, ConverterParameter=UseBuffer}">
+                                    <ContentControl
+                                        Margin="0,6,0,0"
+                                        Content="{x:Bind ProfileVm.UseBuffer, Mode=OneWay}"
+                                        ContentTemplateSelector="{StaticResource UseConPtyTemplateSelector}"
+                                        FontSize="18"
+                                        FontWeight="Light" />
+                                </controls:HeaderedContentControl>
+
+                                <controls:HeaderedContentControl
+                                    Margin="{StaticResource ItemMargin}"
+                                    HorizontalContentAlignment="Stretch"
+                                    Header="{x:Bind Converter={StaticResource I18NConverter}, ConverterParameter=EnvironmentVariables.Text}">
+                                    <ItemsControl Margin="0,6,0,0" ItemsSource="{x:Bind EnvironmentVariables}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate x:DataType="viewmodels:EnvironmentVariableViewModel">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="*" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock
+                                                        Grid.Column="0"
+                                                        MinWidth="100"
+                                                        Margin="0,0,6,0"
+                                                        Text="{x:Bind Name, Mode=OneWay}" />
+                                                    <TextBlock Grid.Column="1" Text="{x:Bind Value, Mode=OneWay}" />
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </controls:HeaderedContentControl>
+
+                                <controls:HeaderedContentControl
+                                    x:Uid="KeyboardShortcut"
+                                    Margin="{StaticResource ItemMargin}"
+                                    HorizontalContentAlignment="Stretch"
+                                    Header="Keyboard shortcut">
+                                    <ContentControl
+                                        Content="{x:Bind KeyBindings, Mode=OneWay}"
+                                        ContentTemplateSelector="{StaticResource TerminalKeybindTemplateSelector}"
+                                        FontSize="18"
+                                        FontWeight="Light" />
+                                </controls:HeaderedContentControl>
+                            </StackPanel>
+                        </Grid>
+                    </DataTemplate>
+                </ContentControl.ContentTemplate>
+            </ContentControl>
+        </ScrollViewer>
+    </Grid>
+</Page>

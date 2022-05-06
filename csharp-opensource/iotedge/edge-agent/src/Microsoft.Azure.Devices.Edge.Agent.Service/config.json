@@ -1,0 +1,52 @@
+﻿{
+  "version": 0,
+  "deploymentConfig": {
+    "schemaVersion": "1.0",
+    "runtime": { // Information about the edge device runtime, common to all modules
+      "type": "docker", // Enum - values - docker
+      "settings": {
+        "minDockerVersion": "v1.13", // Min docker version required by this edgeAgent (currently ignored)
+        "loggingOptions": "" // Logging options for the Edge modules
+      }
+    },
+    "systemModules": {
+      "edgeAgent": { // System Module - required
+        "type": "docker", // Enum - values - docker
+        "settings": {
+          "image": "someregistry/someimage:sometag", // Location of the edgeAgent image
+          "createOptions": "" // Optional - will be null in general case. This is for future proofing
+        },
+        "configuration": {
+          "id": "1234"
+        }
+      },
+      "edgeHub": { // System Module - required
+        "type": "docker", // Enum - values – docker
+        "status": "running", // Enum - values - running, stopped
+        "restartPolicy": "always", // This value should be "always"
+        "settings": {
+          "image": "someregistry/someimage:sometag", // Path to the EdgeHub Image
+          "createOptions": "" // Options string to start the Edge Hub module (templated)
+        },
+        "configuration": {
+          "id": "1234"
+        }
+      }
+    },
+    "modules": {
+      "tempSensor": {
+        "version": "1.0",
+        "type": "docker",
+        "status": "running",
+        "restartPolicy": "always",
+        "settings": {
+          "image": "someregistry/someimage:sometag",
+          "createOptions": ""
+        },
+        "configuration": {
+          "id": "1234"
+        }
+      }
+    }
+  }
+}

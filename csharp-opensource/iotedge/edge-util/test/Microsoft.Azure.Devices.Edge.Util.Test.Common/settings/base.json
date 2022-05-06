@@ -1,0 +1,23 @@
+{
+  "keyVault": {
+    "baseUrl": "https://edgebuildkv.vault.azure.net/",
+    "clientId": "668cc883-59f1-4a11-9d4d-bdf18563d672",
+    "clientCertificateThumbprint": "bd76a78e183714a37a13f855ccd97e15c50f3894"
+  },
+  "iotHubConnStrKey": "IotHubConnStr2",
+  "device1ConnStrKey": "IotDevice1ConnStr2",
+  "device2ConnStrKey": "IotDevice2ConnStr2",
+  "device3ConnStrKey": "IotDevice3ConnStr2",
+  "eventHubConnStrKey": "EventHubConnStr2",
+  "edgeCapableDeviceConnStrKey": "EdgeCapableDevice2",
+  "testSuite": [
+    "test-config-x64.json"
+  ],
+  "dockerHostUrl": "http://localhost:2375",
+  "GatewayHostname": "127.0.0.1",
+  "GatewayDeviceId": "device1",
+  "StressTest_MessagesCount_SingleSender": "10000",
+  "StressTest_MessagesCount_MultipleSenders": "5000",
+  "StressTest_MessagesCount_MultipleSendersMultipleReceivers": "5000",
+  "Tests_StartEdgeHubService": true
+}

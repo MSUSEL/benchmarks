@@ -1,0 +1,59 @@
+﻿<Page
+    x:Class="FluentTerminal.App.Views.SettingsPages.KeyBindingSettings"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:settings="using:FluentTerminal.App.ViewModels.Settings"
+    xmlns:views="using:FluentTerminal.App.Views"
+    mc:Ignorable="d">
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="32" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="1" Margin="{StaticResource HeaderMargin}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <TextBlock
+                x:Uid="Keybindings"
+                VerticalAlignment="Center"
+                FontSize="28"
+                Style="{StaticResource TitleTextBlockStyle}"
+                Text="Keybindings" />
+            <CommandBar
+                Grid.Column="1"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Background="{ThemeResource SystemControlBackgroundAltHighBrush}"
+                DefaultLabelPosition="Right">
+                <AppBarButton
+                    x:Uid="AddAppBarButton"
+                    Icon="Add"
+                    Label="Add">
+                    <AppBarButton.Flyout>
+                        <MenuFlyout x:Name="AddCommandMenu" />
+                    </AppBarButton.Flyout>
+                </AppBarButton>
+                <AppBarButton
+                    x:Uid="Restore"
+                    Command="{x:Bind ViewModel.RestoreDefaultsCommand}"
+                    CommandParameter="keyBindings"
+                    Icon="Undo"
+                    Label="Restore Defaults" />
+            </CommandBar>
+        </Grid>
+        <ScrollViewer Grid.Row="2">
+            <ItemsControl Margin="{StaticResource ContainerMargin}" ItemsSource="{x:Bind ViewModel.KeyBindings, Mode=OneWay}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="settings:KeyBindingsViewModel">
+                        <views:KeyBindingsView Margin="{StaticResource ItemMargin}" ViewModel="{x:Bind}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</Page>

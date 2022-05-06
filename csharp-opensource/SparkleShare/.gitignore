@@ -1,0 +1,40 @@
+*~
+*.swp
+*.swo
+.DS_Store
+*.exe
+*.exe.mdb
+*.userprefs
+*.pidb
+*.gmo
+*.bak
+*.suo
+*.sln.cache
+*.user
+*.resources
+bin/
+build/
+obj/
+git-*
+Sparkles/InstallationInfo.Directory.cs
+SparkleShare/Linux/sparkleshare
+SparkleShare/Mac/git/*
+SparkleShare/Mac/git*
+/sparkleshare-*
+desktop.ini
+_ReSharper.*
+*.msi
+*.wixobj
+*.wixpdb
+*.wxs
+*.dotCover
+SparkleShare/Windows/build/
+.vs/
+
+# NuGet Packages
+*.nupkg
+# The packages folder can be ignored because of Package Restore
+**/packages/*
+# except build/, which is used as an MSBuild target.
+!**/packages/build/
+

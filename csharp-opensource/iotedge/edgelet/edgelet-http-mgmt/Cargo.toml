@@ -1,0 +1,28 @@
+[package]
+name = "edgelet-http-mgmt"
+version = "0.1.0"
+authors = ["Azure IoT Edge Devs"]
+publish = false
+edition = "2018"
+
+[dependencies]
+failure = "0.1"
+futures = "0.1.2"
+hyper = "0.12"
+lazy_static = "1.0"
+log = "0.4"
+serde = "1.0"
+serde_json = "1.0"
+url = "1.7"
+
+edgelet-core = { path = "../edgelet-core" }
+edgelet-docker = { path = "../edgelet-docker" }
+edgelet-http = { path = "../edgelet-http" }
+edgelet-iothub = { path = "../edgelet-iothub" }
+management = { path = "../management" }
+provisioning = { path = "../provisioning" }
+
+[dev-dependencies]
+chrono = { version = "0.4", features = ["serde"] }
+
+edgelet-test-utils = { path = "../edgelet-test-utils" }

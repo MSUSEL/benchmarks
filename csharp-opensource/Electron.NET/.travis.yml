@@ -1,0 +1,8 @@
+language: csharp
+mono: none
+dist: xenial
+dotnet: 3.0
+before_script:
+  - export PATH="$PATH:/home/travis/.dotnet/tools"
+script:
+  - ./buildAll.sh

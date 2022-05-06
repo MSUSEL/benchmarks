@@ -1,0 +1,428 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:n="clr-namespace:ScreenToGif.Controls"
+                    xmlns:c="clr-namespace:ScreenToGif.Util.Converters">
+
+    <c:DoubleToPercentage x:Key="DoubleToPercentageConverter"/>
+    <c:BytesToSize x:Key="BytesToSizeConverter"/>
+
+    <ControlTemplate x:Key="Template.Encoding" TargetType="{x:Type n:EncoderListViewItem}">
+        <Border x:Name="MainBorder" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition Height="6"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="30"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <Viewbox Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" x:Name="InternalViewBox" VerticalAlignment="Center" HorizontalAlignment="Center" 
+                         Stretch="Uniform" StretchDirection="Both" Margin="1" Visibility="Visible" Effect="{x:Null}">
+                    <ContentPresenter Content="{TemplateBinding Image}" Opacity="{DynamicResource Element.Opacity}"/>
+                </Viewbox>
+
+                <n:ImageButton Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" x:Name="CancelButton" Padding="2" Content="{DynamicResource Vector.Close}" ContentWidth="15" ContentHeight="15"
+                               VerticalAlignment="Stretch" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch"
+                               Visibility="Hidden" MaxWidth="{Binding Path=Height, RelativeSource={RelativeSource Mode=Self}}" Style="{DynamicResource Style.Button.NoText}">
+                    <n:ImageButton.ToolTip>
+                        <ToolTip x:Name="CancelToolTip" Content="{DynamicResource Action.Cancel}" Placement="Left" VerticalOffset="-5"/>
+                    </n:ImageButton.ToolTip>
+                </n:ImageButton>
+
+                <Label Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" x:Name="PercentageLabel" Content="{TemplateBinding Percentage, Converter={StaticResource DoubleToPercentageConverter}}" 
+                       Foreground="{DynamicResource Element.Foreground.Gray112}" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Center"
+                       FontFamily="Segoe UI Semilight" BorderThickness="0" MinWidth="45"/>
+
+                <Label Grid.Row="0" Grid.Column="2" Content="{TemplateBinding Text}" HorizontalAlignment="Stretch" Padding="0,1,0,0" Foreground="{DynamicResource Element.Foreground}"/>
+
+                <ProgressBar Grid.Row="1" Grid.Column="2" Value="{TemplateBinding Percentage}" IsIndeterminate="{TemplateBinding IsIndeterminate}"
+                             Minimum="0" Maximum="100" Height="4" HorizontalAlignment="Stretch" Orientation="Horizontal" HorizontalContentAlignment="Stretch"/>
+            </Grid>
+        </Border>
+
+        <ControlTemplate.Triggers>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsMouseOver" Value="True"/>
+                    <Condition Property="IsEnabled" Value="True"/>
+                </MultiTrigger.Conditions>
+
+                <Setter Property="Visibility" TargetName="CancelButton" Value="Visible"/>
+                <Setter Property="Visibility" TargetName="InternalViewBox" Value="Hidden"/>
+            </MultiTrigger>
+
+            <Trigger Property="OutputType" Value="Gif">
+                <Setter Property="Image" Value="{DynamicResource Vector.Gif}"/>
+            </Trigger>
+            <Trigger Property="OutputType" Value="Apng">
+                <Setter Property="Image" Value="{DynamicResource Vector.Apng}"/>
+            </Trigger>
+            <Trigger Property="OutputType" Value="Video">
+                <Setter Property="Image" Value="{DynamicResource Vector.Video}"/>
+            </Trigger>
+            <Trigger Property="OutputType" Value="Photoshop">
+                <Setter Property="Image" Value="{DynamicResource Vector.Psd}"/>
+            </Trigger>
+            <Trigger Property="OutputType" Value="Project">
+                <Setter Property="Image" Value="{DynamicResource Vector.Project}"/>
+            </Trigger>
+
+            <Trigger Property="IsIndeterminate" Value="True">
+                <Setter TargetName="PercentageLabel" Property="Content" Value="~"/>
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="Template.Completed" TargetType="{x:Type n:EncoderListViewItem}">
+        <Border x:Name="MainBorder" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}"
+                Padding="{TemplateBinding Padding}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="30"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Viewbox Grid.Row="0" Grid.Column="0" x:Name="InternalViewBox" VerticalAlignment="Center" HorizontalAlignment="Center" 
+                         Stretch="Uniform" StretchDirection="Both" Margin="1" Visibility="Visible" Effect="{x:Null}">
+                    <ContentPresenter Content="{DynamicResource Vector.Success}" Opacity="{DynamicResource Element.Opacity}"/>
+                </Viewbox>
+
+                <n:ImageButton Grid.Row="0" Grid.Column="0" x:Name="CancelButton" Padding="2" Content="{DynamicResource Vector.Eraser}" ContentWidth="15" ContentHeight="15"
+                               VerticalAlignment="Stretch" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch"
+                               Visibility="Hidden" MaxWidth="{Binding Path=Height, RelativeSource={RelativeSource Mode=Self}}" Style="{DynamicResource Style.Button.NoText}">
+                    <n:ImageButton.ToolTip>
+                        <ToolTip x:Name="CancelToolTip" Content="{DynamicResource Encoder.Remove}" Placement="Left" VerticalOffset="-5"/>
+                    </n:ImageButton.ToolTip>
+                </n:ImageButton>
+
+                <Label Grid.Row="0" Grid.Column="1" x:Name="FileSizeLabel" Content="{TemplateBinding SizeInBytes, Converter={StaticResource BytesToSizeConverter}}" 
+                       Foreground="{DynamicResource Element.Foreground.Gray112}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0"
+                       HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontStyle="Italic" BorderThickness="0" MinWidth="45"/>
+
+                <StackPanel Grid.Column="2"  HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                    <WrapPanel Orientation="Horizontal">
+                        <TextBlock Text="{DynamicResource Encoder.Completed}" Margin="0,0,5,0" Foreground="{DynamicResource Element.Foreground}"/>
+
+                        <TextBlock x:Name="CopiedTextBlock" Visibility="Collapsed" Margin="0,0,5,0">
+                            <Run Text="{DynamicResource Encoder.Completed.Clipboard}" Foreground="{DynamicResource Element.Foreground}"/>
+                        </TextBlock>
+
+                        <TextBlock x:Name="CopyFailedTextBlock" Visibility="Visible" Margin="0,0,5,0">
+                            <Hyperlink x:Name="CopyFailedHyperlink" ToolTip="{DynamicResource Encoder.Error.Info}">
+                                <Run Text="{DynamicResource Encoder.Completed.Clipboard.Fail}"/>
+                            </Hyperlink>
+                        </TextBlock>
+
+                        <TextBlock x:Name="ExecutedTextBlock" Visibility="Collapsed" Margin="0,0,5,0">
+                            <Hyperlink x:Name="ExecutedHyperlink" ToolTip="{DynamicResource Encoder.Completed.Command.Output}">
+                                <Run Text="{DynamicResource Encoder.Completed.Command}"/>
+                            </Hyperlink>
+                        </TextBlock>
+
+                        <TextBlock x:Name="ExecutionFailedTextBlock" Visibility="Visible" Margin="0,0,5,0">
+                            <Hyperlink x:Name="ExecutionFailedHyperlink" ToolTip="{DynamicResource Encoder.Error.Info}">
+                                <Run Text="{DynamicResource Encoder.Completed.Command.Fail}"/>
+                            </Hyperlink>
+                        </TextBlock>
+                    </WrapPanel>
+
+                    <StackPanel x:Name="UploadStackPanel" Orientation="Horizontal" Visibility="Collapsed">
+                        <TextBlock x:Name="UploadedTextBlock" Visibility="Collapsed" ToolTip="{DynamicResource Encoder.Completed.Upload.Delete}">
+                            <Hyperlink x:Name="UploadHyperlink">
+                                <Run Text="{TemplateBinding UploadLinkDisplay}"/>
+                            </Hyperlink>
+                        </TextBlock>
+                        <TextBlock x:Name="UploadFailedTextBlock" Visibility="Visible">
+                            <Hyperlink x:Name="UploadFailedHyperlink" ToolTip="{DynamicResource Encoder.Error.Info}">
+                                <Run Text="{DynamicResource Encoder.Completed.Upload.Fail}"/>
+                            </Hyperlink>
+                        </TextBlock>
+                    </StackPanel>
+                </StackPanel>
+
+                <n:ImageButton Grid.Column="3" x:Name="FileButton" Style="{DynamicResource Style.Button.NoText}" Content="{DynamicResource Vector.Gif}" 
+                               Padding="2,0" ContentWidth="20" ContentHeight="20" ToolTipService.Placement="Top" ToolTipService.HorizontalOffset="-5">
+                    <n:ImageButton.ToolTip>
+                        <TextBlock Foreground="{DynamicResource Element.Foreground}">
+                            <Run Text="{DynamicResource Encoder.OpenFile}"/>
+                            <LineBreak/>
+                            <Run Text="{TemplateBinding OutputFilename}"/>
+                        </TextBlock>
+                    </n:ImageButton.ToolTip>
+                </n:ImageButton>
+
+                <n:ImageButton Grid.Column="4" x:Name="FolderButton" Style="{DynamicResource Style.Button.NoText}" Content="{DynamicResource Vector.Open}" 
+                               Padding="2,0" ContentWidth="20" ContentHeight="20" ToolTipService.Placement="Top" ToolTipService.HorizontalOffset="-5">
+                    <n:ImageButton.ToolTip>
+                        <TextBlock Foreground="{DynamicResource Element.Foreground}">
+                            <Run Text="{DynamicResource Encoder.ExploreFolder}"/>
+                            <LineBreak/>
+                            <Run Text="{TemplateBinding OutputPath}"/>
+                        </TextBlock>
+                    </n:ImageButton.ToolTip>
+                </n:ImageButton>
+            </Grid>
+
+            <Border.ContextMenu>
+                <ContextMenu>
+                    <n:ImageMenuItem x:Name="CopyMenuItem" Header="{DynamicResource Editor.Home.Copy}" Image="{DynamicResource Vector.Copy}"/>
+                    <Separator/>
+                    <n:ImageMenuItem x:Name="CopyImageMenuItem" Header="{DynamicResource Encoder.Copy.Image}" Visibility="Collapsed"/>
+                    <n:ImageMenuItem x:Name="CopyFilenameMenuItem" Header="{DynamicResource Encoder.Copy.Filename}"/>
+                    <n:ImageMenuItem x:Name="CopyFolderMenuItem" Header="{DynamicResource Encoder.Copy.Folder}"/>
+                    <n:ImageMenuItem x:Name="CopyLinkMenuItem" Header="{DynamicResource Encoder.Copy.Link}" Visibility="Collapsed"/>
+                </ContextMenu>
+            </Border.ContextMenu>
+        </Border>
+
+        <ControlTemplate.Triggers>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsMouseOver" Value="True"/>
+                    <Condition Property="IsEnabled" Value="True"/>
+                </MultiTrigger.Conditions>
+
+                <Setter Property="Visibility" TargetName="CancelButton" Value="Visible"/>
+                <Setter Property="Visibility" TargetName="InternalViewBox" Value="Hidden"/>
+            </MultiTrigger>
+
+            <Trigger Property="OutputType" Value="Gif">
+                <Setter TargetName="FileButton" Property="Content" Value="{DynamicResource Vector.Gif}"/>
+            </Trigger>
+            <Trigger Property="OutputType" Value="Apng">
+                <Setter TargetName="FileButton" Property="Content" Value="{DynamicResource Vector.Apng}"/>
+                <Setter TargetName="CopyImageMenuItem" Property="Visibility" Value="Visible"/>
+            </Trigger>
+            <Trigger Property="OutputType" Value="Video">
+                <Setter TargetName="FileButton" Property="Content" Value="{DynamicResource Vector.Video}"/>
+            </Trigger>
+            <Trigger Property="OutputType" Value="Photoshop">
+                <Setter TargetName="FileButton" Property="Content" Value="{DynamicResource Vector.Psd}"/>
+            </Trigger>
+            <Trigger Property="OutputType" Value="Project">
+                <Setter TargetName="FileButton" Property="Content" Value="{DynamicResource Vector.Project}"/>
+            </Trigger>
+
+            <Trigger Property="CopiedToClipboard" Value="True">
+                <Setter TargetName="CopiedTextBlock" Property="Visibility" Value="Visible"/>
+            </Trigger>
+
+            <Trigger Property="CopyTaskException" Value="{x:Null}">
+                <Setter TargetName="CopyFailedTextBlock" Property="Visibility" Value="Collapsed"/>
+            </Trigger>
+
+            <Trigger Property="CommandExecuted" Value="True">
+                <Setter TargetName="ExecutedTextBlock" Property="Visibility" Value="Visible"/>
+            </Trigger>
+
+            <Trigger Property="CommandTaskException" Value="{x:Null}">
+                <Setter TargetName="ExecutionFailedTextBlock" Property="Visibility" Value="Collapsed"/>
+            </Trigger>
+
+            <Trigger Property="Uploaded" Value="True">
+                <Setter TargetName="UploadedTextBlock" Property="Visibility" Value="Visible"/>
+                <Setter TargetName="CopyLinkMenuItem" Property="Visibility" Value="Visible"/>
+            </Trigger>
+
+            <Trigger Property="UploadTaskException" Value="{x:Null}">
+                <Setter TargetName="UploadFailedTextBlock" Property="Visibility" Value="Collapsed"/>
+            </Trigger>
+
+            <Trigger SourceName="UploadedTextBlock" Property="Visibility" Value="Visible">
+                <Setter TargetName="UploadStackPanel" Property="Visibility" Value="Visible"/>
+            </Trigger>
+            <Trigger SourceName="UploadFailedTextBlock" Property="Visibility" Value="Visible">
+                <Setter TargetName="UploadStackPanel" Property="Visibility" Value="Visible"/>
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="Template.Error" TargetType="{x:Type n:EncoderListViewItem}">
+        <Border x:Name="MainBorder" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="30"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Viewbox Grid.Row="0" Grid.Column="0" x:Name="InternalViewBox" VerticalAlignment="Center" HorizontalAlignment="Center" 
+                         Stretch="Uniform" StretchDirection="Both" Margin="1" Visibility="Visible" Effect="{x:Null}">
+                    <ContentPresenter Content="{DynamicResource Vector.Error}" Opacity="{DynamicResource Element.Opacity}"/>
+                </Viewbox>
+
+                <n:ImageButton Grid.Row="0" Grid.Column="0" x:Name="CancelButton" Padding="2" Content="{DynamicResource Vector.Eraser}" ContentWidth="15" ContentHeight="15" 
+                               VerticalAlignment="Stretch" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch"
+                               Visibility="Hidden" MaxWidth="{Binding Path=Height, RelativeSource={RelativeSource Mode=Self}}" Style="{DynamicResource Style.Button.NoText}">
+                    <n:ImageButton.ToolTip>
+                        <ToolTip Content="{DynamicResource Encoder.Remove}" Placement="Left" VerticalOffset="-5"/>
+                    </n:ImageButton.ToolTip>
+                </n:ImageButton>
+
+                <Label Grid.Row="0" Grid.Column="2" Content="{DynamicResource Encoder.Error}" Foreground="{DynamicResource Element.Foreground}" 
+                       HorizontalAlignment="Stretch" VerticalAlignment="Center" Padding="0,1,0,0"/>
+
+                <n:ImageButton Grid.Column="3" x:Name="DetailsButton" Style="{DynamicResource Style.Button.NoText}" Content="{DynamicResource Vector.Application}" 
+                               Padding="2,0" ContentWidth="20" ContentHeight="20">
+                    <n:ImageButton.ToolTip>
+                        <ToolTip Content="{DynamicResource Encoder.Details}" Placement="Top" HorizontalOffset="-5"/>
+                    </n:ImageButton.ToolTip>
+                </n:ImageButton>
+            </Grid>
+        </Border>
+
+        <ControlTemplate.Triggers>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsMouseOver" Value="True"/>
+                    <Condition Property="IsEnabled" Value="True"/>
+                </MultiTrigger.Conditions>
+
+                <Setter Property="Visibility" TargetName="CancelButton" Value="Visible"/>
+                <Setter Property="Visibility" TargetName="InternalViewBox" Value="Hidden"/>
+            </MultiTrigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="Template.Canceled" TargetType="{x:Type n:EncoderListViewItem}">
+        <Border x:Name="MainBorder" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition Height="6"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="30"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <n:ImageButton Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" x:Name="CancelButton" Padding="2" Content="{DynamicResource Vector.Close}" ContentWidth="15" ContentHeight="15"  
+                               VerticalAlignment="Stretch" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch"
+                               MaxWidth="{Binding Path=Height, RelativeSource={RelativeSource Mode=Self}}" Style="{DynamicResource Style.Button.NoText}">
+                    <n:ImageButton.ToolTip>
+                        <ToolTip x:Name="CancelToolTip" Content="{DynamicResource Encoder.Remove}" Placement="Left" VerticalOffset="-5"/>
+                    </n:ImageButton.ToolTip>
+                </n:ImageButton>
+
+                <Label Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" x:Name="PercentageLabel" Content="{TemplateBinding Percentage, Converter={StaticResource DoubleToPercentageConverter}}" 
+                       Foreground="{DynamicResource Element.Foreground.Gray112}" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Center"
+                       FontFamily="Segoe UI Semilight" BorderThickness="0" MinWidth="45"/>
+
+                <Label Grid.Row="0" Grid.Column="2" Content="{DynamicResource Encoder.Canceled}" Foreground="{DynamicResource Element.Foreground}" HorizontalAlignment="Stretch" Padding="0,1,0,0"/>
+
+                <ProgressBar Grid.Row="1" Grid.Column="2" Value="{TemplateBinding Percentage}" Minimum="0" Maximum="100" Height="4" HorizontalAlignment="Stretch" Orientation="Horizontal" HorizontalContentAlignment="Stretch"/>
+            </Grid>
+        </Border>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="Template.File" TargetType="{x:Type n:EncoderListViewItem}">
+        <Border x:Name="MainBorder" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="30"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <Viewbox Grid.Row="0" Grid.Column="0" x:Name="InternalViewBox" VerticalAlignment="Center" HorizontalAlignment="Center" 
+                         Stretch="Uniform" StretchDirection="Both" Margin="1" Visibility="Visible" Effect="{x:Null}">
+                    <ContentPresenter Content="{DynamicResource Vector.FilePermission}" Opacity="{DynamicResource Element.Opacity}"/>
+                </Viewbox>
+
+                <n:ImageButton Grid.Row="0" Grid.Column="0" x:Name="CancelButton" Padding="2" Content="{DynamicResource Vector.Eraser}" ContentWidth="15" ContentHeight="15" 
+                               VerticalAlignment="Stretch" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch"
+                               Visibility="Hidden" MaxWidth="{Binding Path=Height, RelativeSource={RelativeSource Mode=Self}}" 
+                               Style="{DynamicResource Style.Button.NoText}">
+                    <n:ImageButton.ToolTip>
+                        <ToolTip Content="{DynamicResource Encoder.Remove}" Placement="Left" VerticalOffset="-5"/>
+                    </n:ImageButton.ToolTip>
+                </n:ImageButton>
+
+                <Label Grid.Row="0" Grid.Column="2" Content="{DynamicResource Encoder.FileDeletedMoved}" Foreground="{DynamicResource Element.Foreground}" 
+                       HorizontalAlignment="Stretch" VerticalAlignment="Center" Padding="0,1,0,0"/>
+            </Grid>
+        </Border>
+
+        <ControlTemplate.Triggers>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsMouseOver" Value="True"/>
+                    <Condition Property="IsEnabled" Value="True"/>
+                </MultiTrigger.Conditions>
+
+                <Setter Property="Visibility" TargetName="CancelButton" Value="Visible"/>
+                <Setter Property="Visibility" TargetName="InternalViewBox" Value="Hidden"/>
+            </MultiTrigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <!--Encoder ListViewItem-->
+    <Style TargetType="{x:Type n:EncoderListViewItem}">
+        <Setter Property="MinHeight" Value="36"/>
+        <Setter Property="Padding" Value="1"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="BorderThickness" Value="1"/>
+
+        <Style.Triggers>
+            <Trigger Property="Status" Value="Processing">
+                <Setter Property="Template" Value="{StaticResource Template.Encoding}"/>
+            </Trigger>
+            <Trigger Property="Status" Value="Completed">
+                <Setter Property="Template" Value="{StaticResource Template.Completed}"/>
+            </Trigger>
+            <Trigger Property="Status" Value="Error">
+                <Setter Property="Template" Value="{StaticResource Template.Error}"/>
+            </Trigger>
+            <Trigger Property="Status" Value="Canceled">
+                <Setter Property="Template" Value="{StaticResource Template.Canceled}"/>
+            </Trigger>
+            <Trigger Property="Status" Value="FileDeletedOrMoved">
+                <Setter Property="Template" Value="{StaticResource Template.File}"/>
+            </Trigger>
+
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsMouseOver" Value="True"/>
+                    <Condition Property="IsEnabled" Value="True"/>
+                </MultiTrigger.Conditions>
+
+                <Setter Property="Background" Value="{DynamicResource Item.MouseOver.Background}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource Item.MouseOver.Border}"/>
+            </MultiTrigger>
+
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="Selector.IsSelectionActive" Value="False"/>
+                    <Condition Property="IsSelected" Value="True"/>
+                </MultiTrigger.Conditions>
+
+                <Setter Property="Background" Value="{DynamicResource Item.SelectedInactive.Background}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource Item.SelectedInactive.Border}"/>
+            </MultiTrigger>
+
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="Selector.IsSelectionActive" Value="True"/>
+                    <Condition Property="IsSelected" Value="True"/>
+                </MultiTrigger.Conditions>
+
+                <Setter Property="Background" Value="{DynamicResource Item.SelectedActive.Background}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource Item.SelectedActive.Border}"/>
+            </MultiTrigger>
+
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Opacity" Value=".7"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+</ResourceDictionary>

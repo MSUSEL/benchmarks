@@ -1,0 +1,92 @@
+# Run a simple smoke test against a dogfood deployment of the IoT Hub service
+
+pr: none
+trigger: none
+schedules:
+- cron: '0 3 * * *'
+  displayName: Nightly build
+  branches:
+    include:
+    - master
+  always: true
+
+pool:
+  vmImage: ubuntu-16.04
+
+steps:
+- checkout: self
+  fetchDepth: 100
+
+- task: AzureKeyVault@1
+  displayName: Get secrets
+  inputs:
+    azureSubscription: $(az.subscription)
+    keyVaultName: $(az.keyVault)
+    secretsFilter: >-
+      IotHubConnStr2,
+      EventHubConnStr2
+
+- pwsh: |
+    $testDir = '$(Build.SourcesDirectory)/test/Microsoft.Azure.Devices.Edge.Test'
+    dotnet build $testDir
+
+    $binDir = Convert-Path "$testDir/bin/Debug/netcoreapp2.1"
+    Write-Output "##vso[task.setvariable variable=binDir]$binDir"
+  displayName: Build tests
+
+- pwsh: |
+    $context = @{
+      logFile = Join-Path '$(binDir)' 'testoutput.log';
+    }
+    $context | ConvertTo-Json | Out-File -Encoding Utf8 '$(binDir)/context.json'
+  displayName: Create test arguments file (context.json)
+
+- pwsh: |
+    if ($env:EH_ARG -and $env:IH_ARG)
+    {
+      $env:E2E_EVENT_HUB_ENDPOINT = $env:EH_ARG
+      $env:E2E_IOT_HUB_CONNECTION_STRING = $env:IH_ARG
+    }
+    else
+    {
+      $env:E2E_EVENT_HUB_ENDPOINT = $env:EH_KV
+      $env:E2E_IOT_HUB_CONNECTION_STRING = $env:IH_KV
+    }
+
+    $testFile = '$(binDir)/Microsoft.Azure.Devices.Edge.Test.dll'
+    sudo --preserve-env dotnet vstest $testFile --logger:trx --testcasefilter:Name=TempSensor
+  displayName: Run tests
+  env:
+    EH_ARG: $(connstr.eventHub)
+    EH_KV: $(EventHubConnStr2)
+    IH_ARG: $(connstr.iotHub)
+    IH_KV: $(IotHubConnStr2)
+
+- task: PublishTestResults@2
+  displayName: Publish test results
+  inputs:
+    testResultsFormat: vstest
+    testResultsFiles: '**/*.trx'
+    searchFolder: $(Build.SourcesDirectory)/TestResults
+    testRunTitle: Service deployment build  ($(Build.BuildNumber) linux amd64)
+    buildPlatform: amd64
+  condition: succeededOrFailed()
+
+- pwsh: |
+    $logDir = '$(Build.ArtifactStagingDirectory)/logs'
+    New-Item $logDir -ItemType Directory -Force | Out-Null
+    Out-File "$logDir/$(Build.DefinitionName)-$(Build.BuildNumber)"
+    Copy-Item "$(Build.SourcesDirectory)/TestResults" "$logDir/" -Recurse
+    # The setup fixture runs outside the scope of any test, so its logs (*-test-*.log) aren't
+    # included in the TRX. Copy them manually here.
+    Copy-Item "$(binDir)/*-test-*.log" "$logDir/"
+    Copy-Item "$(binDir)/testoutput.log" "$logDir/"
+  displayName: Collect Logs
+  condition: succeededOrFailed()
+
+- task: PublishBuildArtifacts@1
+  displayName: Publish logs
+  inputs:
+    PathtoPublish: $(Build.ArtifactStagingDirectory)/logs
+    ArtifactName: logs-service-deployment-$(Build.BuildNumber)-linux-amd64
+  condition: succeededOrFailed()
